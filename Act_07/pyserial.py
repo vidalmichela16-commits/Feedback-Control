@@ -1,41 +1,21 @@
-#include <Arduino.h>
-#include <Servo.h>
+import serial
+import time
 
-Servo myServo;
-const int servoPin = 9;
+SERIAL_PORT = 'COM5'
+BAUD_RATE = 9600
 
-void setup() {
-  Serial.begin(9600);
+def main():
 
-  myServo.attach(servoPin);
-  myServo.write(90);
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    time.sleep(2)
 
-  Serial.println("Arduino Ready!");
-}
+    while True:
 
-void loop() {
+        angle = input("Enter angle (0-180): ")
 
-  if (Serial.available() > 0) {
+        ser.write((angle + "\n").encode())
 
-    String received = Serial.readStringUntil('\n');
-    received.trim();
+        print("Sent:", angle)
 
-    if (received.length() == 0) return;
-
-    long angle = received.toInt();
-
-    if (angle == 0 && received != "0") {
-      Serial.println("Error: Numbers only!");
-    }
-
-    else if (angle < 0 || angle > 180) {
-      Serial.println("Error: Angle must be 0-180!");
-    }
-
-    else {
-      myServo.write(angle);
-      Serial.print("Moved to: ");
-      Serial.println(angle);
-    }
-  }
-}
+if __name__ == "__main__":
+    main()
